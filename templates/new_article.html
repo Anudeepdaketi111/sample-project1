@@ -1,0 +1,84 @@
+<html>
+<head>
+	<title>Articles</title>
+
+</head>
+
+{% extends 'base.html' %}
+{%block content %}
+<body>
+	<div class="" id="show_loading"></div>
+	<div class="container">
+		<a href="/" class="btn btn-primary pull-right">Home</a>
+		<br>
+		<form class="form" id="create_article_form">
+			<div class="form-group">
+				<label>Author : </label>
+				<input id="author_name" name="author" type="text" class="form-control" required="true">
+			</div>
+			<div class="form-group">
+				<label>Title : </label>
+				<input id="title_name" type="text" name="title" class="form-control" required="true">
+			</div>
+			<div class="form-group">
+				<label>Content : </label>
+				<textarea id="content" type="text" name="content" class="form-control" required="true"></textarea> 
+			</div>
+			<input type="submit" class="btn btn-primary"  value="Submit">
+			<input type="reset" id="clear_form" class="btn btn-warning" value="Clear">
+		</form>
+	</div>
+	<script src="/static/js/bootstrap.min.js"></script>
+	<script>
+		 
+		 
+
+		 $(document).ready(function(){
+			    
+			    $("#create_article_form").submit(function(e){
+			        e.preventDefault();
+			        $('#show_loading').addClass('loading');
+			        var form = $(this);
+			        
+			        var data = form.serializeArray();
+
+			        $.ajax({
+			                    url: '/create_article/',
+			                    dataType: 'json',
+			                    type: 'POST',
+			                    contentType: 'application/json',
+			                    data: JSON.stringify(getFormData(data)),
+			                    success: function(data){
+			                    	$('#show_loading').removeClass('loading');
+			                        console.log("DATA POSTED SUCCESSFULLY"+data);
+			                        if(data.message=="success"){
+			                        	alert(data.message);
+										$('#clear_form').click();
+									}
+									else{
+										alert(data.message);
+									}
+			                    },
+			                    error: function( jqXhr, textStatus, errorThrown ){
+			                    	$('#show_loading').removeClass('loading');
+			                        console.log( errorThrown );
+			                    }
+			        });
+			});
+			});
+
+			//utility function
+			function getFormData(data) {
+			   var unindexed_array = data;
+			   var indexed_array = {};
+
+			   $.map(unindexed_array, function(n, i) {
+			    indexed_array[n['name']] = n['value'];
+			   });
+
+			   return indexed_array;
+			}
+
+	</script>
+</body>
+{%endblock content %}

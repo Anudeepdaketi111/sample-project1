@@ -1,0 +1,85 @@
+
+{% extends 'base.html' %}
+{%block content %}
+
+<body>
+	<div class="" id="show_loading"></div>
+	<div class="container">
+<!-- 	<a href="/new_article/" class="btn btn-primary pull-right">Add Article</a>
+
+ -->
+ <div class="panel panel-primary form-inline" >
+
+ 	<div class="panel-heading clearfix">
+ 	<p style="margin: 0px 0 3px;">Posted Article </p>
+	</div>
+ 	<table id="articles" class="table table-bordered">
+	</table>
+</div>
+	<script src="/static/js/bootstrap.min.js"></script>
+	<script>
+		 $(document).ready(function(){
+		    $('#show_loading').addClass('loading');
+		 		$.ajax({
+			          url : "/view_articles/",
+			          type : "GET",
+			          success : function(data) {
+			            $('#show_loading').removeClass('loading');
+			            var obj = data;
+						$.each(obj, function(key,value) {
+							var row="<tr>";
+							row=row+"<th>Title</th>";
+							row=row+"<td>"+value.title+"</td>";
+							row=row+"</tr>";
+							row=row+"<th>Author</th>";
+							row=row+"<td>"+value.author+"</td></tr>";
+							row=row+"<tr><th>Content</th>";
+							row=row+"<td colspan='2'>"+value.content+"</td></tr>";
+							row=row+"</tr>";
+							row=row+"<th>votes</th>";
+							row=row+"<td><button class='btn btn-primary' onclick='likepost("+value.id+")'>Like  <span class='badge' id='badge"+value.id+"'>"+value.likes+"</span></button></td>";
+							row=row+"</tr>";
+						
+						  	row=row+"<th style='padding-top:40px;'></th>";
+						  $('#articles').append(row);
+						}); 
+			                     
+			          },
+			          error : function(xhr,errmsg,err) {
+			            $('#show_loading').removeClass('loading');
+			              alert(xhr.status + ": " + xhr.responseText);
+			              alert(errmsg);
+			          }
+			      });
+
+
+
+			});
+		 function likepost(id){
+		 	$('#show_loading').addClass('loading');
+		 	$.ajax({
+			          url : "/like_article/"+id+"/",
+			          type : "GET",
+			          success : function(data) {
+			            $('#show_loading').removeClass('loading');
+			            var obj = data;
+
+						alert(data.message);
+						if(data.message=="success"){
+							$('#badge'+id).html(data.likes);
+						}
+						else{
+							alert(data.message);
+						}
+			                     
+			          },
+			          error : function(xhr,errmsg,err) {
+			            $('#show_loading').removeClass('loading');
+			              alert(xhr.status + ": " + xhr.responseText);
+			              alert(errmsg);
+			          }
+			      });
+		 }
+	</script>
+</body>
+{%endblock content %}
